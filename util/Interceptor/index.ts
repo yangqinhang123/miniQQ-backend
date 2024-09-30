@@ -11,7 +11,7 @@ export class ResInterceptor implements InterceptorInterface {
   intercept(action: Action, content: ResponseData) {
     // return content.replace(/Mike/gi, 'Michael');
     logSpecial("统一响应");
-    writeLog(action.request.headers, content.code, content);
+    writeLog(action.request.headers, content.code, {...content});
     // const extend: { [key: string]: any } = {};
     const oldToken = action.request.headers["Authorization"];
     if (oldToken) {

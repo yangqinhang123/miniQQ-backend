@@ -1,9 +1,10 @@
 import Database from "../index";
 import { DataTypes } from "sequelize";
-import { user, contact_table } from "../../types/databases/qq_db";
+import { user, contact_table, chat_history } from "../../types/databases/qq_db";
 interface Tables {
   user: user;
   contact_table: contact_table;
+  chat_history: chat_history;
 }
 
 const QQ_DB = Database.factory<Tables>("QQ_DB", {
@@ -38,6 +39,10 @@ const QQ_DB = Database.factory<Tables>("QQ_DB", {
       type: DataTypes.CHAR(255),
       allowNull: false,
     },
+    permission: {
+      allowNull: false,
+      type: DataTypes.TINYINT(),
+    },
   },
   contact_table: {
     id: {
@@ -57,6 +62,34 @@ const QQ_DB = Database.factory<Tables>("QQ_DB", {
     personB_user_name: {
       type: DataTypes.CHAR(255),
       allowNull: false,
+    },
+  },
+  chat_history: {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.CHAR(255),
+    },
+    create_time: {
+      type: DataTypes.DATE(),
+      allowNull: false,
+    },
+    from: {
+      type: DataTypes.CHAR(255),
+      allowNull: false,
+    },
+    to: {
+      type: DataTypes.CHAR(255),
+      allowNull: false,
+    },
+    msg: {
+      type: DataTypes.CHAR(255),
+      allowNull: false,
+    },
+    is_del: {
+      allowNull: false,
+      type: DataTypes.TINYINT(),
     },
   },
 });

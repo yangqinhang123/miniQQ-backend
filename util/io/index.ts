@@ -31,10 +31,12 @@ export const writeFile = (filePath: string, buffer: Buffer) => {
   return new Promise<string>(async (resolve, reject) => {
     try {
       const directory = path.dirname(filePath);
+      logSpecial(directory)
       fs.mkdir(directory, { recursive: true }, (err) => {
         if (err) {
           reject(err);
         } else {
+          logSpecial(filePath)
           fs.writeFile(filePath, buffer, (err) => {
             if (err) {
               reject(err);

@@ -7,14 +7,19 @@ import response from "../res";
 import { jsonParse } from "../other";
 import { jwtConfig } from "../../lib/config";
 import { mergeObj } from "../mergeObj";
+import QQ_DB from "../../database/all/qq_db";
 
 @Middleware({ type: "before" })
 export class ExcludeMiddleware implements ExpressMiddlewareInterface {
   async use(req: Request, res: Response, next: (err?: any) => any) {
     logSpecial("统一鉴权");
-
+    logSpecial(req.path);
     try {
-      if (req.path === "/user/addUser" || req.path === "/login") {
+      if (
+        req.path === "/user/addUser" ||
+        req.path === "/login" ||
+        /^\/file\/getFile\/[^\/]+$/.test(req.path)
+      ) {
         logSpecial("到这");
         return next(); // 不执行全局中间件
       }
@@ -22,7 +27,7 @@ export class ExcludeMiddleware implements ExpressMiddlewareInterface {
         return next();
       }
     } catch (error: any) {
-      logSpecial("出错啦");
+      logSpecial("出错啦", error);
 
       return res.status(200).json(response.errorWithReject(error));
     }
@@ -91,7 +96,10 @@ export class ExcludeMiddleware implements ExpressMiddlewareInterface {
  * @returns 如果有权限，true，无权限，返回false
  */
 export const permissionJudge = async (request: Request) => {
-  const { permission } = await JWT.getTokenAndData(request);
+  const { user_name } = await JWT.getTokenAndData(request);
+  const { permission } = (
+    await QQ_DB.findAll("user", { where: { user_name } })
+  )[0];
   if (permission) {
     return true;
   } else {

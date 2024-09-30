@@ -22,3 +22,4 @@ export const judge = async <T>(
     return Promise.reject(new RejectData(ResCode.BAD_REQUEST, "参数错误"));
   }
 };
+

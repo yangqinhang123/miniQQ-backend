@@ -11,6 +11,17 @@ import { Server } from "socket.io";
 import { logSpecial } from "./util/io/log";
 import { createServer } from "http";
 import expressWs from "express-ws";
+import { ContactController } from "./src/controllers/contact.controller";
+import { jsonParse } from "./util/other";
+import { ChatMsgType, MsgType } from "./types/others";
+import {
+  ChatController,
+  isHaveChat,
+} from "./src/controllers/chatHistory.controller";
+import QQ_DB from "./database/all/qq_db";
+import { ImageController } from "./src/controllers/file.controller";
+import { initAndAddWs } from "./util/WebSocket/initAndAddWs";
+
 async function init() {
   // 新增：初始化 DataSource
   //   await ds
@@ -41,12 +52,17 @@ async function init() {
 
   // 将当前实例注册到 routing-controllers
   useExpressServer(app, {
-    controllers: [UserController, LoginController],
+    controllers: [
+      UserController,
+      LoginController,
+      ContactController,
+      ChatController,
+      ImageController,
+    ],
     routePrefix: "/api",
     middlewares: [ExcludeMiddleware],
     interceptors: [ResInterceptor],
   });
-
   /**
    * route.ws('/url',(ws, req)=>{  })
    * 建立WebSocket服务，并指定对应接口url，及相应回调
@@ -56,58 +72,15 @@ async function init() {
    * ws.on方法用于监听事件（如监听message事件，或监听close事件）
    * */
   route.ws("/mySocketUrl", (ws, req) => {
-    ws.on("connection", () => {
-      logSpecial('连接成功')
-    })
-    // console.log('连接成功', ws)
-
-    ws.send("来自服务端推送的消息");
-
-    ws.on("message", function (msg) {
-      logSpecial(msg)
-      ws.send(`收到客户端的消息为：${msg}，再返回去`);
-    });
-
-    // 使用定时器不停的向客户端推动消息
-    // let timer: any = setInterval(() => {
-    //   ws.send(`服务端定时推送消息: ${Date.now()}`);
-    // }, 1000);
-
-    ws.on("close", function (e) {
-      // console.log('连接关闭')
-      // clearInterval(timer);
-      // timer = null;
-    });
+    
+    const params = req.query;
+    logSpecial('连接', params["user_name"])
+    initAndAddWs(ws, params["user_name"] as string);
+    // broadcast({ type: "test", data: "来自服务端端消息" }, TARGET_USER.ALL);
   });
-  // const server = createServer(app);
-
-  // const io = new Server(server, { cors: { origin: "*" } });
-  // io.on("connection", (socket) => {
-  //   console.log("连接成功");
-
-  //   // receive a message from the client
-  //   socket.on("send", (e) => {
-  //     // console.log(e);
-  //     logSpecial("onsend");
-  //     logSpecial(e);
-  //     // socket.emit("back", "服务器返回的消息");
-  //   });
-  //   socket.on("message", (e) => {
-  //     logSpecial("onmessage");
-  //     logSpecial(e);
-  //   });
-
-  //   socket.on("disconnecting", () => {
-  //     console.log("用户离开，连接断开");
-  //   });
-  // });
-
-  // server.listen("5432", () => {
-  //   logSpecial("websocket启动，5432");
-  // });
 
   app.use(route);
-  app.listen(3000, () => {
+  app.listen(3000, "192.168.121.176", () => {
     console.log(`  App is running at http://localhost:3000\n`);
     console.log("  Press CTRL-C to stop\n");
   });

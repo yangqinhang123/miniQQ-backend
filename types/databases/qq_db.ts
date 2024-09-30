@@ -16,6 +16,8 @@ export interface user {
   user_email: string;
   /**用户头像*/
   user_avatar: string;
+  /**是否为登录态，1是0不是 */
+  permission: number
 }
 /**联系人列表 */
 export interface contact_table {
@@ -27,4 +29,20 @@ export interface contact_table {
   personA_user_name: string;
   /**另一方的qq号 */
   personB_user_name: string;
+}
+
+/**聊天记录表 */
+export interface chat_history {
+  /**主键 */
+  id: string;
+  /**开始时间 */
+  create_time: number;
+  /**来自谁 */
+  from: string;
+  /**发给谁 */
+  to: string;
+  /**具体的消息 */
+  msg: string;
+  /**假删除标志 */
+  is_del: number;
 }
