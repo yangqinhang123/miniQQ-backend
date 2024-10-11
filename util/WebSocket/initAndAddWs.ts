@@ -51,13 +51,10 @@ export const initAndAddWs = (ws: WebSocket.WebSocket, user_name: string) => {
       logSpecial("送出去");
       sendMsgToTargetUser(res, res.data.to);
     }
-    // ws.send(`收到客户端的消息为：${msg}，再返回去`);
   });
   ws.on("close", function (e: any) {
     logSpecial("连接关闭", user_name);
     clients.delete(obj);
-    // clearInterval(timer);
-    // timer = null;
   });
 };
 
