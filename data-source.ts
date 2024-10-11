@@ -1,23 +1,10 @@
 import path from "path";
-import { DataSource, DbOptions } from "typeorm";
 import { mergeObj } from "./util/mergeObj";
 import { CreateOptions, DestroyOptions, FindOptions, Model, ModelAttributes, ModelOptions, ModelStatic, Options, Sequelize, UpdateOptions } from 'sequelize'
 import mysql2 from 'mysql2'
 import { databaseConfig } from "./lib/config";
 import { logError, logSpecial } from "./util/io/log";
 import { Paging } from "./types/api";
-
-const dataSource = new DataSource({
-  type: "mysql", // 数据库类型
-  host: "localhost", // mysql 服务地址
-  port: 3306, // mysql 服务启动端口
-  username: "root", // mysql 用户名
-  password: "abc328676", // mysql 密码
-  database: "QQ_DB", // 数据库
-  entities: [path.join(__dirname, "/../**/*.entity.{js,ts}")], // typeorm 实体
-//   entityPrefix: "zm-", // 数据库表前缀
-  logging: true, // 开启日志
-});
 
 
 /**数据库基础类
@@ -189,5 +176,3 @@ class Database<D extends Record<string, any>, tablename extends string = Extract
 
 }
 export default Database
-
-// export default dataSource;

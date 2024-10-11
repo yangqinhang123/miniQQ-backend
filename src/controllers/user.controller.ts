@@ -13,7 +13,6 @@ import {
   HeaderParam,
   QueryParams,
 } from "routing-controllers";
-import { UserService } from "../services/user.service";
 import { logError, logSpecial } from "../../util/io/log";
 import { ResponseData } from "../../util/res/code";
 import { user } from "../../types/databases/qq_db";
@@ -31,16 +30,6 @@ import { Op } from "sequelize";
 
 @JsonController("/user")
 export class UserController {
-  userService;
-  constructor() {
-    this.userService = new UserService();
-  }
-
-  @Get("/queryList")
-  async queryList() {
-    const userList = await this.userService.queryList();
-    return response.success<user[]>(userList);
-  }
 
   @Get("/queryUser")
   async queryUser(@QueryParams() query: QueryUserParamType) {
@@ -50,15 +39,20 @@ export class UserController {
       });
       const res = await QQ_DB.findAll("user", {
         where: {
-          user_name: {
-            [Op.like]: `%${key_word}%`,
+          [Op.or]: {
+            user_name: {
+              [Op.like]: `%${key_word}%`,
+            },
+            nickName: {
+              [Op.like]: `%${key_word}%`,
+            },
           },
         },
         attributes: {
           exclude: ["user_pwd"],
         },
       });
-      return response.success(res.map((item: any) => item["dataValues"]));
+      return response.success(res.map((item) => item["dataValues"]));
     } catch (error: any) {
       logSpecial("查询用户接口出错", error);
       return response.errorWithReject(error);
@@ -91,14 +85,15 @@ export class UserController {
       if (await judgeIsHaveUser(user_name)) {
         return response.success({ isOk: false, msg: "账号已存在" });
       }
-      await this.userService.addUser(
+      await QQ_DB.add("user", {
         user_name,
         user_pwd,
         nickName,
         user_email,
         user_avatar,
-        1
-      );
+        create_time: Date.now(),
+        permission: 1,
+      });
       return response.success({ isOk: true, msg: "注册成功" });
     } catch (error: any) {
       logError("注册新用户接口", error);

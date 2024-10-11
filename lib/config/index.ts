@@ -14,6 +14,6 @@ export const jwtConfig = {
   expiresIn: 60 * 60 * 1, //有效期一小时。在有效期内刷新页面，会刷新token有效期
 };
 
-/**在服务器上存文件的路径的基础路径 */
-export const serverFileBaseUrl = "/qq";
+/**在服务器上存文件的路径的基础路径（绝对路径） */
+export const uploadPath = "/Users/john/images/";
 

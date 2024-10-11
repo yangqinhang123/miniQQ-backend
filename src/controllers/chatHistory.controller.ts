@@ -41,7 +41,8 @@ export class ChatController {
               from: stringJoi(),
               to: stringJoi(),
               msg: stringJoi(),
-              is_del: numberJoi(),
+              from_del: numberJoi(),
+              to_del: numberJoi(),
             }),
           ],
         }),
@@ -69,8 +70,10 @@ export class ChatController {
       const { user_name } = await JWT.judgeToken(token);
       const res = await QQ_DB.findAll("chat_history", {
         where: {
-          [Op.or]: [{ from: user_name }, { to: user_name }],
-          is_del: 0,
+          [Op.or]: [
+            { from: user_name, from_del: 0 },
+            { to: user_name, to_del: 0 },
+          ],
         },
         order: [["create_time", "ASC"]],
       });
@@ -83,22 +86,45 @@ export class ChatController {
   }
 
   @Post("/deleChat")
-  async deleChat(@Body() requestBody: DeleChatParamType) {
+  async deleChat(
+    @Body() requestBody: DeleChatParamType,
+    @HeaderParam("authorization") token: string
+  ) {
     try {
       const { id } = await judge(requestBody, {
         id: stringJoi(),
       });
-      await QQ_DB.update(
-        "chat_history",
-        {
-          is_del: 1,
-        },
-        {
-          where: {
-            id,
-          },
+      const { user_name } = await JWT.judgeToken(token);
+      const chatItem = (
+        await QQ_DB.findAll("chat_history", { where: { id } })
+      )?.[0]?.["dataValues"];
+      if (chatItem) {
+        if (user_name === chatItem.from) {
+          await QQ_DB.update(
+            "chat_history",
+            {
+              from_del: 1,
+            },
+            {
+              where: {
+                id,
+              },
+            }
+          );
+        } else if (user_name === chatItem.to) {
+          await QQ_DB.update(
+            "chat_history",
+            {
+              to_del: 1,
+            },
+            {
+              where: {
+                id,
+              },
+            }
+          );
         }
-      );
+      }
       return response.success("操作成功");
     } catch (error: any) {
       logSpecial("删除聊天记录失败", error);

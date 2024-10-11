@@ -99,7 +99,8 @@ export const permissionJudge = async (request: Request) => {
   const { user_name } = await JWT.getTokenAndData(request);
   const { permission } = (
     await QQ_DB.findAll("user", { where: { user_name } })
-  )[0];
+  )[0].dataValues;
+  logSpecial('permisson', permission)
   if (permission) {
     return true;
   } else {

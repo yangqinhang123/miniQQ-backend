@@ -11,6 +11,7 @@ import {
 import response from "../../util/res";
 import {
   AddContactParamType,
+  DeleContactParamType,
   LoginReqType,
   QueryContactListParamType,
 } from "../../types/api";
@@ -41,6 +42,7 @@ export class ContactController {
         create_time: Date.now(),
         personA_user_name: personA,
         personB_user_name: personB,
+        is_del: 0,
       });
       return response.success({
         isOk: true,
@@ -51,10 +53,36 @@ export class ContactController {
     }
   }
 
-  @Get("/queryContactList")
-  async queryContactList(
+  @Post("/deleContact")
+  async deleContact(
+    @Body() requestBody: DeleContactParamType,
     @HeaderParam("authorization") token: string
   ) {
+    try {
+      const { user_name } = await JWT.judgeToken(token);
+      const { target_user } = await judge(requestBody, {
+        target_user: stringJoi(),
+      });
+      await QQ_DB.update(
+        "contact_table",
+        { is_del: 1 },
+        {
+          where: {
+            [Op.or]: [
+              { personA_user_name: user_name, personB_user_name: target_user },
+              { personA_user_name: target_user, personB_user_name: user_name },
+            ],
+          },
+        }
+      );
+      return response.success("操作成功");
+    } catch (error: any) {
+      return response.errorWithReject(error);
+    }
+  }
+
+  @Get("/queryContactList")
+  async queryContactList(@HeaderParam("authorization") token: string) {
     try {
       const { user_name } = await JWT.judgeToken(token);
       const res = await QQ_DB.findAll("contact_table", {
@@ -63,6 +91,7 @@ export class ContactController {
             { personA_user_name: user_name },
             { personB_user_name: user_name },
           ],
+          is_del: 0,
         },
       });
 

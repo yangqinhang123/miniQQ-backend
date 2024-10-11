@@ -39,7 +39,7 @@ export class LoginController {
         });
         // throw new RejectData(ResCode.FORBIDDEN, "账号已在其他地方登录");
       }
-      const user = res[0];
+      const user = res[0].dataValues;
       logSpecial(user.user_pwd);
       logSpecial(user_pwd);
       if (user_pwd === user.user_pwd) {

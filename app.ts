@@ -23,21 +23,6 @@ import { ImageController } from "./src/controllers/file.controller";
 import { initAndAddWs } from "./util/WebSocket/initAndAddWs";
 
 async function init() {
-  // 新增：初始化 DataSource
-  //   await ds
-  //     .initialize()
-  //     .then(() => {
-  //       console.log("Data Source has been initialized!");
-  //     })
-  //     .catch((e: any) => {
-  //       console.log("Error during Data Source initialization:", e);
-  //     });
-  // const app = createExpressServer({
-  //   controllers: [UserController, LoginController],
-  //   routePrefix: "/api",
-  //   middlewares: [ExcludeMiddleware],
-  //   interceptors: [ResInterceptor],
-  // });
   const route = express.Router();
   const app = express();
   expressWs(app);

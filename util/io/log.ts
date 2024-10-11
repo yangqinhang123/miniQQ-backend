@@ -1,6 +1,5 @@
 import { appendToFile, blackHoleStream } from "./index";
 import { formatDay, getToday, sliceStr } from "../index";
-import { serverFileBaseUrl } from "../../lib/config/index";
 import { getAbsPath } from "../other/index";
 
 const getServetPath = getAbsPath;

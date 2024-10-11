@@ -63,6 +63,10 @@ const QQ_DB = Database.factory<Tables>("QQ_DB", {
       type: DataTypes.CHAR(255),
       allowNull: false,
     },
+    is_del: {
+      allowNull: false,
+      type: DataTypes.TINYINT(),
+    },
   },
   chat_history: {
     id: {
@@ -87,7 +91,11 @@ const QQ_DB = Database.factory<Tables>("QQ_DB", {
       type: DataTypes.CHAR(255),
       allowNull: false,
     },
-    is_del: {
+    from_del: {
+      allowNull: false,
+      type: DataTypes.TINYINT(),
+    },
+    to_del: {
       allowNull: false,
       type: DataTypes.TINYINT(),
     },

@@ -45,6 +45,11 @@ export interface AddContactParamType {
   /**联系人B的qq号（自己或对方） */
   personB: string;
 }
+/**删除联系人 - 请求参数 */
+export interface DeleContactParamType {
+  /**对方的qq号 */
+  target_user: string
+}
 
 /**查询所有联系人 - 请求参数 */
 export interface QueryContactListParamType {

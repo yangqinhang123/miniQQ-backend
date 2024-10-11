@@ -14,41 +14,6 @@ interface ClientObjType {
 }
 // 存储所有连接的客户端
 export const clients = new Set<ClientObjType>();
-// 创建一个 Proxy
-const handler: any = {
-  add(target: any, value: any) {
-    console.log(`添加元素: ${value}`);
-    target.add(value);
-    return true; // 返回 true 表示设置成功
-  },
-  delete(target: any, value: any) {
-    console.log(`删除元素: ${value}`);
-    target.delete(value);
-    return true; // 返回 true 表示删除成功
-  },
-  clear(target: any) {
-    console.log("清空 Set");
-    target.clear();
-  },
-  // 拦截其他方法，如 has
-  has(target: any, value: any) {
-    console.log(`检查元素: ${value}`);
-    return target.has(value);
-  },
-};
-// const clients = new Proxy(client, {
-//   get(target, property, receiver) {
-//     // 拦截方法调用，确保调用上下文正确
-//     const originalMethod = Reflect.get(target, property, receiver);
-//     if (typeof originalMethod === "function") {
-//       return function (...args: any[]) {
-//         // 调用原始方法并确保上下文指向原始 Set 对象
-//         return originalMethod.apply(target, args);
-//       };
-//     }
-//     return originalMethod;
-//   },
-// });
 
 /**
  * 初始化websocket实例，并记录

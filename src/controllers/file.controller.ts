@@ -15,15 +15,7 @@ import multer from "multer";
 import { createHash } from "crypto";
 import JWT from "../../util/jwt";
 import fs from 'fs'
-// 配置 multer 存储选项
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "/Users/john/images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // 使用时间戳和原始文件名
-  },
-});
+import { uploadPath } from "../../lib/config";
 
 @Controller("/file")
 export class ImageController {
@@ -121,4 +113,3 @@ const getPublicPath = (filename: string) => {
     return `http://192.168.121.176:3000/api/file/getFile/${filename}`
 }
 
-const uploadPath = "/Users/john/images/";
