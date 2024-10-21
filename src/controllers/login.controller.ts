@@ -13,7 +13,7 @@ import QQ_DB from "../../database/all/qq_db";
 import { logSpecial } from "../../util/io/log";
 import JWT from "../../util/jwt";
 import { RejectData, ResCode } from "../../util/res/code";
-import { clients, judgeClientIsHave } from "../../util/WebSocket/initAndAddWs";
+import { clients, judgeClientIsHave, judgeClientIsHaveAndClearClient } from "../../util/WebSocket/initAndAddWs";
 
 @JsonController("/login")
 export class LoginController {
@@ -32,13 +32,14 @@ export class LoginController {
           msg: "账号不存在",
         });
       }
-      if (judgeClientIsHave(user_name)) {
-        return response.success({
-          isOk: false,
-          msg: "账号已在其他地方登录",
-        });
-        // throw new RejectData(ResCode.FORBIDDEN, "账号已在其他地方登录");
-      }
+      judgeClientIsHaveAndClearClient(user_name)
+      // if (judgeClientIsHave(user_name)) {
+      //   return response.success({
+      //     isOk: false,
+      //     msg: "账号已在其他地方登录",
+      //   });
+      //   // throw new RejectData(ResCode.FORBIDDEN, "账号已在其他地方登录");
+      // }
       const user = res[0].dataValues;
       logSpecial(user.user_pwd);
       logSpecial(user_pwd);

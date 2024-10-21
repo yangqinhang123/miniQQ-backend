@@ -21,19 +21,19 @@ export const clients = new Set<ClientObjType>();
  * @param user_name 客户端当前登录用户的qq号（用于区分各个客户端）
  */
 export const initAndAddWs = (ws: WebSocket.WebSocket, user_name: string) => {
-  if (judgeClientIsHave(user_name)) {
-    ws.send(
-      JSON.stringify({
-        type: "tip",
-        data: {
-          msgType: "error",
-          msg: "用户已连接或已在其他地方连接，不可重复连接噢！",
-        },
-      })
-    );
-    ws.close();
-    return;
-  }
+  // if (judgeClientIsHave(user_name)) {
+  //   ws.send(
+  //     JSON.stringify({
+  //       type: "error",
+  //       data: {
+  //         msg: "用户已连接或已在其他地方连接，不可重复连接噢！",
+  //       },
+  //     })
+  //   );
+  //   ws.close();
+  //   return;
+  // }
+  judgeClientIsHaveAndClearClient(user_name)
   const obj = {
     user_name: user_name,
     ws_instance: ws,
@@ -58,7 +58,11 @@ export const initAndAddWs = (ws: WebSocket.WebSocket, user_name: string) => {
   });
 };
 
-// 广播消息给所有连接的客户端
+/**
+ * 发送消息给指定客户端
+ * @param message 消息
+ * @param target_user 目标客户端的用户名
+ */
 function sendMsgToTargetUser(
   message: MsgType,
   target_user: string | TARGET_USER
@@ -92,13 +96,28 @@ function sendMsgToTargetUser(
  */
 export const judgeClientIsHave = (user_name: string) => {
   let flag = false;
-  logSpecial(clients)
+  logSpecial(clients);
   clients.forEach((item) => {
     if (item.user_name === user_name) {
       flag = true;
     }
   });
   return flag;
+};
+
+/**
+ * 查询该用户是否已经连接，并清除掉已连接的客户端
+ */
+export const judgeClientIsHaveAndClearClient = (user_name: string) => {
+  clients.forEach((item) => {
+    if (item.user_name === user_name) {
+      sendMsgToTargetUser(
+        { type: "error", data: { msg: "你的账号已在别处登录" } },
+        item.user_name
+      );
+      disconnect(item.user_name)
+    }
+  });
 };
 
 /**

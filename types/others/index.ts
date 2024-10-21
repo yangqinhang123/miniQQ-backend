@@ -4,7 +4,8 @@ import { chat_history } from "../databases/qq_db";
 export type Tinyint = 0 | 1;
 
 export interface MsgType {
-  type: string;
+  /**消息类型，类型为error，客户端接收到会退出登录 */
+  type: "chat" | "error";
   data: any;
 }
 export interface ChatMsgType {
