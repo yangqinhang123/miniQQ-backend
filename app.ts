@@ -65,7 +65,7 @@ async function init() {
   });
 
   app.use(route);
-  app.listen(3000, "192.168.121.176", () => {
+  app.listen(3000, () => {
     console.log(`  App is running at http://localhost:3000\n`);
     console.log("  Press CTRL-C to stop\n");
   });
