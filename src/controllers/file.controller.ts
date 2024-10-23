@@ -110,6 +110,6 @@ const getSuffix = (originFileName: string) => {
 };
 
 const getPublicPath = (filename: string) => {
-    return `http://192.168.121.176:3000/api/file/getFile/${filename}`
+    return `/api/file/getFile/${filename}`
 }
 
