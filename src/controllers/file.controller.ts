@@ -63,22 +63,6 @@ export class ImageController {
   }
 }
 
-export const fileUploadOptions = () => ({
-  storage: multer.diskStorage({
-    destination: (req: any, file: any, cb: any) => {
-      cb(null, "/Users/john/images/");
-    },
-    filename: (req: any, file: any, cb: any) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
-    },
-  }),
-  //   fileFilter: (req: any, file: any, cb: any) => {},
-  //   limits: {
-  //     fieldNameSize: 255,
-  //     fileSize: 1024 * 1024 * 2,
-  //   },
-});
-
 /**获得文件的md5，用来作为唯一索引  -  文件过大时，获取md5会很长很长时间。 或者可以考虑，用 文件名+文件最后修改时间做“唯一”标识*/
 const getMd5 = (file: Express.Multer.File) => {
   const hash = createHash("md5"); // 创建 MD5 哈希对象
