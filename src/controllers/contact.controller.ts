@@ -32,22 +32,47 @@ export class ContactController {
         personA: stringJoi(),
         personB: stringJoi(),
       });
-      if (await judgeIsHave(personA, personB)) {
+      const res = await QQ_DB.findAll("contact_table", {
+        where: {
+          [Op.or]: [
+            { personA_user_name: personA, personB_user_name: personB },
+            { personA_user_name: personB, personB_user_name: personA },
+          ],
+        },
+      });
+      if (res.length !== 0 && res[0].dataValues.is_del === 0) {
         return response.success({
           isOk: false,
           msg: "已是好友",
         });
+      } else if (res.length !== 0 && res[0].dataValues.is_del === 1) {
+        await QQ_DB.update(
+          "contact_table",
+          {
+            is_del: 0,
+          },
+          {
+            where: {
+              id: res[0].dataValues.id,
+            },
+          }
+        );
+        return response.success({
+          isOk: true,
+          msg: "添加成功",
+        });
+      }else {
+        await QQ_DB.add("contact_table", {
+          create_time: Date.now(),
+          personA_user_name: personA,
+          personB_user_name: personB,
+          is_del: 0,
+        });
+        return response.success({
+          isOk: true,
+          msg: "添加成功",
+        });
       }
-      await QQ_DB.add("contact_table", {
-        create_time: Date.now(),
-        personA_user_name: personA,
-        personB_user_name: personB,
-        is_del: 0,
-      });
-      return response.success({
-        isOk: true,
-        msg: "添加成功",
-      });
     } catch (error: any) {
       return response.errorWithReject(error);
     }
@@ -119,25 +144,3 @@ export class ContactController {
     }
   }
 }
-
-/**
- * 判断两个人是否已经是互为联系人
- * @param personA 联系人A
- * @param personB 联系人B
- * @returns true为是，false为不是
- */
-const judgeIsHave = async (personA: string, personB: string) => {
-  const res = await QQ_DB.findAll("contact_table", {
-    where: {
-      [Op.or]: [
-        { personA_user_name: personA, personB_user_name: personB },
-        { personA_user_name: personB, personB_user_name: personA },
-      ],
-    },
-  });
-  if (res.length === 0) {
-    return false;
-  } else {
-    return true;
-  }
-};
