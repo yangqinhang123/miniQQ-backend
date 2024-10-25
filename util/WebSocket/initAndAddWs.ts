@@ -21,19 +21,7 @@ export const clients = new Set<ClientObjType>();
  * @param user_name 客户端当前登录用户的qq号（用于区分各个客户端）
  */
 export const initAndAddWs = (ws: WebSocket.WebSocket, user_name: string) => {
-  // if (judgeClientIsHave(user_name)) {
-  //   ws.send(
-  //     JSON.stringify({
-  //       type: "error",
-  //       data: {
-  //         msg: "用户已连接或已在其他地方连接，不可重复连接噢！",
-  //       },
-  //     })
-  //   );
-  //   ws.close();
-  //   return;
-  // }
-  judgeClientIsHaveAndClearClient(user_name)
+  // judgeClientIsHaveAndClearClient(user_name)
   const obj = {
     user_name: user_name,
     ws_instance: ws,
